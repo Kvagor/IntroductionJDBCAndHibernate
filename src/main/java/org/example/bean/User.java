@@ -22,5 +22,9 @@ public class User {
     @Column(name = "age")
     private byte age;
 
-
+    public User(String name, String lastName, byte age) {
+        this.name = name;
+        this.lastName = lastName;
+        this.age = age;
+    }
 }
