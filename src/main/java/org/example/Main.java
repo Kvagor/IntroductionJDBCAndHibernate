@@ -1,11 +1,13 @@
 package org.example;
 
 import org.example.service.UserService;
+import org.example.service.UserServiceHibernateImpl;
 import org.example.service.UserServiceJDBCImpl;
 
 public class Main {
     public static void main(String[] args) {
         scrypt(new UserServiceJDBCImpl());
+        scrypt(new UserServiceHibernateImpl());
     }
 
     private static void scrypt(UserService userService) {

@@ -7,6 +7,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.query.Query;
 
 import java.util.List;
 import java.util.Objects;
@@ -44,8 +45,8 @@ public class UserDaoHibernateImpl implements UserDao {
             transaction = session.beginTransaction();
             session.persist(new User(name, lastName, age));
             transaction.commit();
-        }catch (HibernateException e){
-            if (Objects.nonNull(transaction)){
+        } catch (HibernateException e) {
+            if (Objects.nonNull(transaction)) {
                 transaction.rollback();
             }
             throw new RuntimeException(e);
@@ -54,12 +55,35 @@ public class UserDaoHibernateImpl implements UserDao {
 
     @Override
     public void removeUserById(long id) {
-
+        Transaction transaction = null;
+        try (Session session = sessionFactory.openSession()) {
+            transaction = session.beginTransaction();
+            User user = session.get(User.class, id);
+            session.delete(user);
+            transaction.commit();
+        }catch (HibernateException e) {
+            if (Objects.nonNull(transaction)) {
+                transaction.rollback();
+            }
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     public List<User> getAllUsers() {
-        return null;
+        Transaction transaction = null;
+        try (Session session = sessionFactory.openSession()) {
+            String hql = "from User";
+            transaction = session.beginTransaction();
+            Query<User> query = session.createQuery(hql, User.class);
+            transaction.commit();
+            return query.list();
+        }catch (HibernateException e) {
+            if (Objects.nonNull(transaction)) {
+                transaction.rollback();
+            }
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
